@@ -30,40 +30,7 @@ def xyzx(record=10)->None:
 #         book.save()
 
 
-
-# Bulk Create And Delete and Update
-import time
-def create_Cat(number):
-    start_time = time.time()
-    create=[Category(name=fake.name())for i in range(number)]
-    # create = []
-    # for _ in range(number):
-    #     create.append(Category(name=fake.name()))
-    Category.objects.bulk_create(create)
-    end_time = time.time()
-    print(f"Created {number} categories in {end_time - start_time:.2f} seconds.")
-
-# create_Cat(100000)
-
-
-
-def delete():
-    Category.objects.all().delete()
-
-# def update(name):
-#     print(Student.objects.filter(name__icontains=name).count())
-#     print(Student.objects.filter(name__icontains=name).update(name='FARHA'))
-# update('Chandran')
-
-
 def xyz():
     my_college=Collage.objects.all()
     students = Student.objects.filter(collage__in=my_college, gender='Male')
     print(students)
-
-def bulk_update_is_deleted():
-    # Get the primary keys of the first 50 categories
-    category_ids = Category.objects.values_list('id', flat=True)[:50]
-    # # Perform the bulk update using the retrieved primary keys
-    updated_count = Category.objects.filter(id__in=category_ids).update(is_deleted=True)
-    print(f"Updated {updated_count} categories as deleted.")
