@@ -1,0 +1,152 @@
+from django.db.models import Count, Sum, Avg, Max, Min, F, Value, CharField, IntegerField, Q, Case, When, ExpressionWrapper, DurationField, OuterRef, Subquery, Prefetch
+from django.db.models.functions import Concat, Coalesce, Length, Upper, Lower, TruncMonth
+
+# 1. Count the number of books each author has written.
+Author.objects.annotate(book_count=Count('book'))
+
+# 2. Calculate the total sales for each product.
+Product.objects.annotate(total_sales=Sum('order__quantity'))
+
+# 3. Find the average price of products per category.
+Category.objects.annotate(avg_price=Avg('product__price'))
+
+# 4. Get the maximum price of products in each category.
+Category.objects.annotate(max_price=Max('product__price'))
+
+# 5. Annotate authors with the number of published books.
+Author.objects.annotate(books_published=Count('book__is_published', filter=Q(book__is_published=True)))
+
+# 6. Calculate the total number of orders per customer.
+Customer.objects.annotate(total_orders=Count('order'))
+
+# 7. Sum the total price of orders per customer.
+Customer.objects.annotate(total_spent=Sum('order__total_price'))
+
+# 8. Find the minimum product price in each category.
+Category.objects.annotate(min_price=Min('product__price'))
+
+# 9. Annotate books with their author's full name.
+Book.objects.annotate(author_name=Concat(F('author__first_name'), Value(' '), F('author__last_name'), output_field=CharField()))
+
+# 10. Count the number of books by each publisher.
+Publisher.objects.annotate(book_count=Count('book'))
+
+# 11. Calculate the average rating of books for each author.
+Author.objects.annotate(avg_rating=Avg('book__rating'))
+
+# 12. Annotate customers with their most recent order date.
+Customer.objects.annotate(last_order_date=Max('order__date'))
+
+# 13. Count the number of books with a rating above 4.
+Book.objects.annotate(high_rating_count=Count('rating', filter=Q(rating__gt=4)))
+
+# 14. Find the total quantity of products ordered for each order.
+Order.objects.annotate(total_quantity=Sum('orderitem__quantity'))
+
+# 15. Calculate the total value of each order.
+Order.objects.annotate(total_value=Sum(F('orderitem__quantity') * F('orderitem__product__price'), output_field=IntegerField()))
+
+# 16. Annotate products with the length of their names.
+Product.objects.annotate(name_length=Length('name'))
+
+# 17. Count the number of products in each category with price greater than $100.
+Category.objects.annotate(expensive_products=Count('product', filter=Q(product__price__gt=100)))
+
+# 18. Annotate authors with the total number of pages they have written.
+Author.objects.annotate(total_pages=Sum('book__pages'))
+
+# 19. Find the highest rated book for each author.
+Author.objects.annotate(highest_rating=Max('book__rating'))
+
+# 20. Calculate the total revenue for each publisher.
+Publisher.objects.annotate(total_revenue=Sum('book__order__total_price'))
+
+# 21. Annotate products with their uppercase names.
+Product.objects.annotate(upper_name=Upper('name'))
+
+# 22. Count the number of orders placed in the last month.
+Order.objects.annotate(recent_orders=Count('id', filter=Q(date__gte=now()-timedelta(days=30))))
+
+# 23. Annotate customers with the number of different products they have ordered.
+Customer.objects.annotate(distinct_products=Count('order__orderitem__product', distinct=True))
+
+# 24. Calculate the total discount given per order.
+Order.objects.annotate(total_discount=Sum(F('orderitem__discount'), output_field=IntegerField()))
+
+# 25. Find the average number of pages for books per author.
+Author.objects.annotate(avg_pages=Avg('book__pages'))
+
+# 26. Annotate orders with the number of items that were on sale.
+Order.objects.annotate(on_sale_items=Count('orderitem', filter=Q(orderitem__product__on_sale=True)))
+
+# 27. Calculate the total number of authors who have published more than 3 books.
+Author.objects.annotate(book_count=Count('book')).filter(book_count__gt=3).count()
+
+# 28. Annotate customers with the sum of prices of all products they have bought.
+Customer.objects.annotate(total_spent=Sum('order__orderitem__product__price'))
+
+# 29. Find the latest book published by each author.
+Author.objects.annotate(latest_book=Max('book__published_date'))
+
+# 30. Annotate books with their publisher's name.
+Book.objects.annotate(publisher_name=F('publisher__name'))
+
+# 31. Calculate the total price of all books sold in each order.
+Order.objects.annotate(total_books_value=Sum('orderitem__product__price'))
+
+# 32. Annotate products with the count of orders they have been in.
+Product.objects.annotate(order_count=Count('orderitem'))
+
+# 33. Find the earliest book published by each author.
+Author.objects.annotate(first_book=Min('book__published_date'))
+
+# 34. Annotate orders with the number of unique products.
+Order.objects.annotate(unique_products=Count('orderitem__product', distinct=True))
+
+# 35. Calculate the average discount per product.
+Product.objects.annotate(avg_discount=Avg('orderitem__discount'))
+
+# 36. Count the number of authors who have written more than one book.
+Author.objects.annotate(book_count=Count('book')).filter(book_count__gt=1).count()
+
+# 37. Annotate publishers with the total number of pages in all their books.
+Publisher.objects.annotate(total_pages=Sum('book__pages'))
+
+# 38. Find the highest discount given on any product.
+Product.objects.annotate(max_discount=Max('orderitem__discount'))
+
+# 39. Annotate customers with the total number of items they have bought.
+Customer.objects.annotate(total_items=Sum('order__orderitem__quantity'))
+
+# 40. Calculate the total price of orders placed in the last 7 days.
+Order.objects.annotate(last_week_value=Sum('total_price', filter=Q(date__gte=now()-timedelta(days=7))))
+
+# 41. Annotate books with the total number of reviews they have received.
+Book.objects.annotate(review_count=Count('review'))
+
+# 42. Count the number of publishers who have published more than 10 books.
+Publisher.objects.annotate(book_count=Count('book')).filter(book_count__gt=10).count()
+
+# 43. Annotate products with the total revenue they have generated.
+Product.objects.annotate(total_revenue=Sum(F('orderitem__quantity') * F('price'), output_field=IntegerField()))
+
+# 44. Calculate the average rating of products in each category.
+Category.objects.annotate(avg_rating=Avg('product__rating'))
+
+# 45. Annotate authors with the number of reviews they have received.
+Author.objects.annotate(review_count=Sum('book__review__id'))
+
+# 46. Find the total number of orders placed by each customer.
+Customer.objects.annotate(order_count=Count('order'))
+
+# 47. Annotate orders with the average rating of all products included.
+Order.objects.annotate(avg_product_rating=Avg('orderitem__product__rating'))
+
+# 48. Count the number of products in each order that were on sale.
+Order.objects.annotate(on_sale_count=Count('orderitem__product', filter=Q(orderitem__product__on_sale=True)))
+
+# 49. Calculate the total price of items in an order that were not on sale.
+Order.objects.annotate(not_on_sale_value=Sum(F('orderitem__quantity') * F('orderitem__product__price'), filter=Q(orderitem__product__on_sale=False)))
+
+# 50. Annotate authors with the number of different publishers they have worked with.
+Author.objects.annotate(publisher_count=Count('book__publisher', distinct=True))
