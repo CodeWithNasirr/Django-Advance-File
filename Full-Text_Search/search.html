@@ -1,0 +1,63 @@
+{% extends 'account/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .search form{
+       display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="y-main max-width1 m-auto my-2">
+    <div class="search">
+        <form method="post">
+            {% csrf_token %}
+            <div class="search-text">
+                <input type="text" class="search" name="search" id="text" value="{{ search }}">
+                <button class="y-btn" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+    <div class="table" style="width:106%">
+    <table> 
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Brand</th>
+                <th>SKU</th>
+                <th>Thubnails   </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for product in Products %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{product.Title}}</td>
+                <td>{{product.Description}}</td>
+                <td>{{product.Category}}</td>
+                <td>{{product.Price}}</td>
+                <td>{{product.Brand}}</td>
+                <td>{{product.SKU}}</td>
+                <td><img src="{{product.Thubnails}}" alt="img" width="100px" height="80px"></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+
+
+</div>
+
+
+{% endblock %}
