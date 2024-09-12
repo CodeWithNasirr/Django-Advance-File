@@ -1,0 +1,24 @@
+{% extends 'account/base.html' %}
+{% load static %}
+
+{% block css %}
+<style>
+    .search form{
+       display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+</style>
+
+{% endblock %}
+
+{% block body %}
+
+<div class="y-main max-width1 m-auto my-2">
+    {% if result.id %}
+    <p>Results:{{result.id }}</p>
+    <a href="{% url 'Check_Results' result.id %}">Check Results</a>
+    {% endif %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+    <div class="home">
+        <h1>Welcome Please Check Your Results </h1>
+        {% if result %}
+        <p>Task Id: {{result.id}}</p>
+        <p>Task State: {{result.state}}</p>
+        <p>Task Status: {{result.status}}</p>
+        <p>Task Results: {{result.result}}</p>
+        {% endif %}
+    </div>
+</body>
+</html>
