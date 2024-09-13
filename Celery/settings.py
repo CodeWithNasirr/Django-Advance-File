@@ -11,13 +11,13 @@ CELERY_TASK_SERIALIZER='json'
 CELERY_RESULT_SERIALIZER='json'
 
 
-## MEthod-1
-CELERY_BEAT_SCHEDULE={
-    'every-10-seconds':{
-        'task':'accounts.task.clear_session_cache',
-        'schedule':10,
-        'args':('111',),
-        #Add More peridic task..
+# ## MEthod-1
+# CELERY_BEAT_SCHEDULE={
+#     'every-10-seconds':{
+#         'task':'accounts.task.clear_session_cache',
+#         'schedule':10,
+#         'args':('111',),
+#         #Add More peridic task..
 
-    }
-}
+#     }
+# }
