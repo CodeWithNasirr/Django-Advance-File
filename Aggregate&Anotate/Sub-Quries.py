@@ -1,6 +1,12 @@
+
+import django
+import os
+os.environ['DJANGO_SETTINGS_MODULE'] = 'Study.settings'
+django.setup()
 from django.db.models import Count, Sum, Avg, Max, Min, F, Value, CharField, IntegerField, Q, Case, When, ExpressionWrapper, DurationField, OuterRef, Subquery, Prefetch,Exists
 from django.db.models.functions import Concat, Coalesce, Length, Upper, Lower, TruncMonth
-from.models import *
+from test_study.models import *
+
 
 # 1. Count the number of books each author has written.
 def handle():
@@ -54,8 +60,7 @@ def handle5():
             print(f"Book-{index} : {book.book_name}")
 
 #SubQueryMEthod
-#Latest Book For Each Author
-def handle6():
+#Latest Book For Each Author 
     latest_book = Book.objects.filter(
         author=OuterRef('pk')
     ).order_by('-published_date').values('book_name')[:1]
@@ -126,6 +131,71 @@ def handles9():
             print(f"Bookname: {book.book_name} ")
 
 
+
+#1. Count the number of reviews per book and order by the number of reviews:
+def handle1():
+    books_with_review=Book.objects.annotate(review=Count('reviews')).order_by('-review').filter(review__gte=1)
+    for book in books_with_review:
+        print(f"Book: {book.book_name}, Reviews: {book.review}")
+
+#2. Calculate the average rating of each book:
+def handle2():
+    books_with_Rating=Book.objects.annotate(avg=Avg('reviews__rating')).order_by('-avg').filter(avg__gte=1)
+    for book in books_with_Rating:
+        print(f"Book: {book.book_name}, Avg_Rating: {book.avg}")
+
+
+
+#Get total number of students in each collage:
+def handle3():
+    collages=Collage.objects.annotate(student_count=Count('student'))
+    for collage in collages:
+        print(f"Collage Name: {collage.collage_name} Total_Studnt: {collage.student_count}")
+
+#3 Calculate the total price of orders for each customer:
+def handle4():
+    # Annotate customers with the total price of their orders, filtering those with total_price >= 1
+    customers = Customer.objects.annotate(total_price=Sum('orders__total_price')).order_by('-total_price').filter(total_price__gte=1)
+    
+    for customer in customers:
+        # Print customer details
+        print(f'Customer Name: {customer.first_name} {customer.last_name}, Total Price: {customer.total_price}')
+        
+        # Access the orders of this customer
+
+        for order in customer.orders.all():
+            # Access each order's related order items and their associated products
+            for order_item in order.orderitems.all():
+                product=order_item.product  # Add the product's name to the set
+        
+        # Print the products ordered by the customer
+        print(f"Products: {product.name}")
+
+#4 Calculate a Customer total Order And His oreder details ?
+def handle5():
+    customers=Customer.objects.annotate(total_order=Count('orders')).order_by('-total_order').filter(total_order__gte=1)
+    for customer in customers:
+        print(f'CustumerName: {customer.first_name} {customer.last_name} total_order: {customer.total_order}')
+        orders=Order.objects.filter(customer=customer)
+        index=1
+        for order in orders:
+            order_item=OrderItem.objects.filter(order=order)
+            for item in  (order_item):
+                print(f" {index}: {item.product.name} Price: {item.product.price} Quntity: {item.quantity}")
+                index+=1
+
+#Annotate products with the count of orders they have been in. and all access his details
+def handle6():
+    products=Product.objects.annotate(Count_order=Count('orderitems')
+                                      )
+    for pdt in products:
+        print(f"Name: {pdt.name} Total_Order: {pdt.Count_order}")
+        for index,order_item in enumerate (pdt.orderitems.all(),start=1):  #Access related OrderItems
+            order=order_item.order
+            print(f" {index}:Discount: {order_item.discount} Price:{pdt.price} Qty: {order_item.quantity}")
+
+
+
 # SubQueryMEthod
 # Avg Price Of Books Published By Each Author
 def handle10():
@@ -138,12 +208,11 @@ def handle10():
 # SubQueryMEthod
 # Most Expensive Book For Each Author
 def handle11():
-    books = Book.objects.filter(author=OuterRef('id')).values('author').order_by('-price')
-    authors=Author.objects.annotate(Expensive=Subquery(books.values('price')[:1]),
-                                    Expensive_Book_name=Subquery(books.values('book_name')[:1])).filter(Expensive__isnull=False)
+    books=Book.objects.filter(author=OuterRef('id')).values('author').order_by('-price')
+    authors=Author.objects.annotate(Expensive=Subquery(books.values('price')),
+                                   Expensive_Book_name=Subquery(books.values('book_name'))).filter(Expensive__gte=1)
     for author in authors:
         print(f"Author Name: {author.author_name} ExpensiveBook: {author.Expensive} BookName: {author.Expensive_Book_name} ")
-
 
 # SubQueryMEthod
 # Author With Atleast One Book Priced over 50rs
@@ -170,15 +239,14 @@ def handle13():
 
 def handle14():
     books=Book.objects.filter(author=OuterRef('id'),
+                              published_date__year=1999,
                               published_date__month=1).values('author')
     authors=Author.objects.annotate(
         has_books_in_jan=Exists(books),
         Jan_Book=Subquery(books.values('book_name')[:1]),
         pub=Subquery(books.values('published_date')[:1])
-        
         ).filter(has_books_in_jan=True)
 
     for author in authors:
         print(f"Author Name: {author.author_name}")
         print(f"Januwary: {author.Jan_Book} Date: {author.pub}")
-
