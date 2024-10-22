@@ -7,7 +7,8 @@
 # }
 #  "django_elasticsearch_dsl",
 
-
+#  python .\manage.py search_index #this cmd is for u check what inside your elastic search
+# CommandError: No action specified. Must be one of '--create','--populate', '--delete' or '--rebuild' .
 
 from django_elasticsearch_dsl import Document,fields
 from django_elasticsearch_dsl.registries import registry
