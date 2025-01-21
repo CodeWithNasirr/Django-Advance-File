@@ -34,6 +34,7 @@ def WebScraper():
         # })
         # x=News(Title=title,desc=desc,External_link=external_link,img=img)
         # x.save()
+        
         #For Downloading Images By Using Threading
         def downloader(url):
             response = requests.get(url).content

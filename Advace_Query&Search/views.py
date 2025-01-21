@@ -12,12 +12,7 @@ def Search(request):
     search=request.GET.get('search').lower()
     age=request.GET.get('age')
     if search:
-        student=student.filter(
-            Q(name__icontains=search)|
-            Q(Email__icontains=search) |
-            Q(number__icontains=search) |
-            Q(gender__icontains=search) |
-            Q(collage__collage_name__icontains=search) )
+        student=student.filter(Q(name__icontains=search)|Q(Email__icontains=search) |Q(number__icontains=search) |Q(gender__icontains=search) |Q(collage__collage_name__icontains=search) )
         
     if age:
         if age =="1":

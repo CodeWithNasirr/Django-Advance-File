@@ -1,5 +1,4 @@
 from faker import Faker
-from test_study.models import *
 import random
 
 fake=Faker('en_IN')
